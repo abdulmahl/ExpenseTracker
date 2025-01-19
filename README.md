@@ -2,7 +2,7 @@
 
 ## Java Expense Tracker
 
-- Hello World example application in Java.
+- Expense Tracker console application in Java.
 
 - [youtube.com](https://youtu.be/kF3z9N9SVKE)
 
