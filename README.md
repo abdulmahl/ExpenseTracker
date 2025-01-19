@@ -4,7 +4,7 @@
 
 - Hello World example application in Java.
 
-- [youtube.com](https://youtu.be/tZ6NXQJc7Ak)
+- [youtube.com](https://youtu.be/kF3z9N9SVKE)
 
 ## Development Environment
 
