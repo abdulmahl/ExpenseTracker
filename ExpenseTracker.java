@@ -49,10 +49,16 @@ public class ExpenseTracker {
     boolean keepAdding = true; // Controls whether to continue adding expenses
 
     System.out.println("Welcome to the Expense Tracker.");
+    System.out.println("Type 'exit' at any time to quit the application.");
 
     while (keepAdding) {
       System.out.print("Enter the name of the product: ");
       String productName = scanner.nextLine();
+
+      // Check if the user wants to exit
+      if (productName.equalsIgnoreCase("exit")) {
+        break;
+      }
 
       // Ensure product name is not empty
       if (productName.trim().isEmpty()) {
@@ -71,6 +77,11 @@ public class ExpenseTracker {
         } else if (expense > 0) {
           System.out.print("Enter the category for " + productName + ": ");
           String category = scanner.nextLine();
+
+          // Check if the user wants to exit
+          if (category.equalsIgnoreCase("exit")) {
+            break;
+          }
 
           // Create a new Product object
           Product product = new Product(productName, expense, category);
@@ -92,19 +103,28 @@ public class ExpenseTracker {
           System.out.println("Invalid input. Please enter a positive number.");
         }
       } else {
+        String invalidInput = scanner.nextLine(); // Read invalid input
+        if (invalidInput.equalsIgnoreCase("exit")) {
+          break;
+        }
         System.out.println("Invalid input. Please enter a valid number.");
-        scanner.next(); // Clear invalid input
       }
     }
 
     // Display summary of all expenses
+    // Display summary of all expenses
     System.out.println("---------------------------------------------------------------------");
     System.out.println("\nThank you for using the Expense Tracker.");
     System.out.println("---------------------------------------------------------------------");
-    System.out.println("\nExpense Summary by Category:");
-    for (Product product : expenseList) {
-      System.out.println("Category: " + product.getCategory() + ", Name: " + product.getName() + ", Price: R"
-          + String.format("%.2f", product.getPrice()));
+
+    if (expenseList.isEmpty()) {
+      System.out.println("Your Expense List is Empty");
+    } else {
+      System.out.println("\nExpense Summary by Category:");
+      for (Product product : expenseList) {
+        System.out.println("Category: " + product.getCategory() + ", Name: " + product.getName() + ", Price: R"
+            + String.format("%.2f", product.getPrice()));
+      }
     }
 
     System.out.println("Total spend for this session is: R" + String.format("%.2f", totalSpend));
