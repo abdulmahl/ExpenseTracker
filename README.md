@@ -1,6 +1,6 @@
 # Overview
 
-## Introduction to Java
+## Java Expense Tracker
 
 - Hello World example application in Java.
 
