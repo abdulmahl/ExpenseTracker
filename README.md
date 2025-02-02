@@ -4,7 +4,7 @@
 
 - Expense Tracker console application in Java.
 
-- [youtube.com](https://youtu.be/kF3z9N9SVKE)
+- [youtube.com](https://youtu.be/fBfapTfqPgY)
 
 ## Development Environment
 
