@@ -1,23 +1,17 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class ExpenseTracker {
-
-  // Inner class to represent a product with name, price, and category
   public static class Product {
-    String name;
-    double price;
-    String category;
+    private final String name;
+    private final double price;
+    private final String category;
 
-    // Constructor to initialize product details
     public Product(String name, double price, String category) {
       this.name = name;
       this.price = price;
       this.category = category;
     }
 
-    // Getters for the product attributes
     public String getName() {
       return name;
     }
@@ -30,113 +24,102 @@ public class ExpenseTracker {
       return category;
     }
 
-    // Method to display the details of the product
     public void displayDetails() {
-      System.out.println("--------------------------------------------");
-      System.out.println("Product Details:");
-      System.out.println("--------------------------------------------");
-      System.out.println("Product: " + name);
-      System.out.println("Price: R" + String.format("%.2f", price));
-      System.out.println("Category: " + category);
-      System.out.println("--------------------------------------------");
+      System.out.printf("%n--------------------------------------------%n");
+      System.out.printf("Product Added:");
+
+      System.out.printf("\nProduct: %s%nPrice: R%.2f%nCategory: %s%n", name, price, category);
+      System.out.printf("--------------------------------------------%n");
     }
   }
 
   public static void main(String[] args) {
     Scanner scanner = new Scanner(System.in);
-    List<Product> expenseList = new ArrayList<>(); // List to store all expenses
-    double totalSpend = 0; // Tracks total spending
-    boolean keepAdding = true; // Controls whether to continue adding expenses
+    List<Product> expenseList = new ArrayList<>();
+    Map<String, Double> categoryTotals = new HashMap<>();
+    double totalSpend = 0;
 
     System.out.println("Welcome to the Expense Tracker.");
-    System.out.println("Type 'exit' at any time to quit the application.");
+    while (true) {
+      System.out.println("Choose an option: 1) Add Expense  2) View Summary  3) Exit");
+      String choice = scanner.nextLine().trim();
 
-    while (keepAdding) {
-      System.out.print("Enter the name of the product: ");
-      String productName = scanner.nextLine();
-
-      // Check if the user wants to exit
-      if (productName.equalsIgnoreCase("exit")) {
+      if (choice.equals("3")) {
         break;
-      }
+      } else if (choice.equals("1")) {
+        System.out.print("Enter product name: ");
+        String productName = scanner.nextLine().trim();
+        while (productName.isEmpty()) {
+          System.out.println("Product name cannot be empty.");
+          System.out.print("Enter product name: ");
+          productName = scanner.nextLine().trim();
+        }
 
-      // Ensure product name is not empty
-      if (productName.trim().isEmpty()) {
-        System.out.println("Product name cannot be empty. Please try again.");
-        continue;
-      }
-
-      System.out.print("Enter the expense for " + productName + " (or press 0 to quit): ");
-
-      if (scanner.hasNextDouble()) {
-        double expense = scanner.nextDouble();
-        scanner.nextLine(); // Consume newline character
-
-        if (expense == 0) {
-          keepAdding = false;
-        } else if (expense > 0) {
-          System.out.print("Enter the category for " + productName + ": ");
-          String category = scanner.nextLine();
-
-          // Check if the user wants to exit
-          if (category.equalsIgnoreCase("exit")) {
-            break;
+        double expense = 0;
+        while (true) {
+          System.out.print("Enter expense for " + productName + ": ");
+          if (scanner.hasNextDouble()) {
+            expense = scanner.nextDouble();
+            scanner.nextLine();
+            if (expense > 0)
+              break;
+            else
+              System.out.println("Expense must be positive.");
+          } else {
+            System.out.println("Invalid input. Enter a number.");
+            scanner.nextLine();
           }
-
-          // Create a new Product object
-          Product product = new Product(productName, expense, category);
-
-          // Add product to the list
-          expenseList.add(product);
-
-          // Display product details
-          product.displayDetails();
-
-          // Update total spending
-          totalSpend += product.getPrice();
-
-          System.out.println("Total spend so far: R" + String.format("%.2f", totalSpend));
-          System.out.println("--------------------------------------------");
-          System.out.println();
-
-        } else {
-          System.out.println("Invalid input. Please enter a positive number.");
         }
+
+        System.out.print("Enter category for " + productName + ": ");
+        String category = scanner.nextLine().trim();
+
+        // Check if the category is empty
+        if (category.isEmpty()) {
+          System.out.println("Category cannot be empty.");
+          System.out.print("Enter product category: ");
+          category = scanner.nextLine().trim();
+        } else if (!category.matches("[a-zA-Z\\s]+")) { // Regex to allow only alphabets and spaces
+          System.out.print("Enter a valid product category: ");
+          category = scanner.nextLine().trim();
+        }
+
+        Product product = new Product(productName, expense, category);
+        expenseList.add(product);
+        categoryTotals.put(category, categoryTotals.getOrDefault(category, 0.0) + expense);
+        totalSpend += product.getPrice();
+
+        product.displayDetails();
+        System.out.printf("Total spend so far: R%.2f%n--------------------------------------------%n", totalSpend);
+      } else if (choice.equals("2")) {
+        displaySummary(expenseList, categoryTotals, totalSpend);
       } else {
-        String invalidInput = scanner.nextLine(); // Read invalid input
-        if (invalidInput.equalsIgnoreCase("exit")) {
-          break;
-        }
-        System.out.println("Invalid input. Please enter a valid number.");
+        System.out.println("Invalid choice. Please enter 1, 2, or 3.");
       }
     }
 
-    // Display summary of all expenses
-    // Display summary of all expenses
-    System.out.println("---------------------------------------------------------------------");
-    System.out.println("\nThank you for using the Expense Tracker.");
-    System.out.println("---------------------------------------------------------------------");
+    // Display summary on exit
+    displaySummary(expenseList, categoryTotals, totalSpend);
+    System.out.println("Thank you for using the Expense Tracker!");
+    scanner.close();
+  }
 
+  private static void displaySummary(List<Product> expenseList, Map<String, Double> categoryTotals, double totalSpend) {
+    System.out.println("\n---------------------------------------------------------------------");
+    System.out.println("Expense Summary by Category:");
     if (expenseList.isEmpty()) {
       System.out.println("Your Expense List is Empty");
     } else {
-      System.out.println("\nExpense Summary by Category:");
-      for (Product product : expenseList) {
-        System.out.println("Category: " + product.getCategory() + ", Name: " + product.getName() + ", Price: R"
-            + String.format("%.2f", product.getPrice()));
-      }
+      categoryTotals
+          .forEach((category, total) -> System.out.printf("Category: %s, Total Spend: R%.2f%n", category, total));
+      System.out.println("---------------------------------------------------------------------");
+      System.out.println("\nDetailed Expense List:");
+      expenseList.forEach(
+          p -> System.out.printf("Category: %s, Name: %s, Price: R%.2f%n", p.getCategory(), p.getName(), p.getPrice()));
     }
-
-    System.out.println("Total spend for this session is: R" + String.format("%.2f", totalSpend));
-
-    // Provide feedback based on total spending
-    if (totalSpend > 1000) {
-      System.out.println("You have spent more than R1000. Please be mindful of your expenses.");
-    } else {
-      System.out.println("You are within your budget. Well done!");
-    }
+    System.out.printf("Total spend for this session: R%.2f%n", totalSpend);
+    System.out.println(
+        totalSpend > 1000 ? "You have spent over R1000. Be mindful of expenses." : "You are within budget. Well done!");
     System.out.println("---------------------------------------------------------------------");
-
-    scanner.close(); // Close the scanner to release resources
   }
 }

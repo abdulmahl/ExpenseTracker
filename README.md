@@ -1,6 +1,6 @@
 # Overview
 
-## Java Expense Tracker
+## Java Expense Tracker: Part 2
 
 - Expense Tracker console application in Java.
 
